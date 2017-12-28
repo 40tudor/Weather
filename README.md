@@ -1,6 +1,6 @@
 # Weather
 
-ccocloud1.py - final with heartbeat
+wccocloud1.py - final with heartbeat
 
 wccocloud.py - initial mod of cloud.py with wcco color coding but no heartbeat
 
