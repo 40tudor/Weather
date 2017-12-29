@@ -141,7 +141,7 @@ while True:
     # Adds 10deg to todays high than checks to see if that is less than tomorrows high.
     # If tomorrow is more than 10% hotter cloud should be red
 #    print '--> Check for red'
-    if (int(today_high)+10) < int(next_high):
+    if (int(today_high)+5) < int(next_high):
         red_cloud = 1
     else:
         red_cloud = 0
@@ -149,7 +149,7 @@ while True:
     # Subtracts 10deg from todays low than checks to see if that is greater than tomorrows low.
     # If tomorrow is more than 10% colder the cloud should be blue
 #    print '--> Check for blue'
-    if (int(today_high)-10) > int(next_high):
+    if (int(today_high)-5) > int(next_high):
         blue_cloud = 1
     else:
         blue_cloud = 0
