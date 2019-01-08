@@ -20,6 +20,8 @@ LED_STRIP      = ws.WS2811_STRIP_RGB
 heartbeat      = 0
 colorHeart     = Color(0,200,0)
 
+owm_api_key = "65c53054e58a0f87648abf849ed06ff3"
+
 # Create NeoPixel object with appropriate configuration.
 strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
 # Intialize the library (must be called once before other functions).
@@ -56,34 +58,40 @@ def colorAll(strip, colorLeft, colorRight, colorHeart):
 def getWeather():
     # Change to your location
 #    print '--> Setting Location'
-    url = requests.get('https://query.yahooapis.com/v1/public/yql?q=select item.forecast from weather.forecast where woeid in (select woeid from geo.places(1) where text="excelsior, mn")&format=json')
-    global weather
-    weather = json.loads(url.text)
-    print weather
+#    today = requests.get('https://api.openweathermap.org/data/2.5/weather?zip=55331,us&units=imperial&APPID=65c53054e58a0f87648abf849ed06ff3')
+#    global weather
+#    weather = json.loads(today.text)
+#    print type(weather)
+    tomorrow = requests.get('https://api.openweathermap.org/data/2.5/forecast?zip=55331,us&units=imperial&APPID=65c53054e58a0f87648abf849ed06ff3')
+    global forecast
+    forecast = json.loads(tomorrow.text)
+    print type(forecast)
+#    print forecast
 
     # Gets todays High and Low
 #    print '--> Getting Todays Temps'
     global today_high
-    today_high = (weather['query']['results']['channel'][0]['item']['forecast']['high'])
+    today_high = (forecast['list'][1]['main']['temp_max'])
+    print today_high
     global today_low
-    today_low = (weather['query']['results']['channel'][0]['item']['forecast']['low'])
+    today_low = (forecast['list'][1]['main']['temp_min'])
+    print today_low
 
-    # Get weather code for today
-#    print '--> Getting Todays Weather Code'
-    global today_code
-    today_code = (weather['query']['results']['channel'][0]['item']['forecast']['code'])
-    
     # Gets tomorrows High and Low
 #    print '--> Getting Tomorrows Temps'
     global next_high
-    next_high = (weather['query']['results']['channel'][1]['item']['forecast']['high'])
+    next_high = (forecast['list'][7]['main']['temp_max'])
+    print next_high
     global next_low
-    next_low = (weather['query']['results']['channel'][1]['item']['forecast']['low'])
+    next_low = (forecast['list'][7]['main']['temp_min'])
+    print next_low
 
     # Get weather code of tomorrows forecast
 #    print '--> Getting Tomorrows Weather Code'
     global next_forecast 
-    next_forecast = (weather['query']['results']['channel'][1]['item']['forecast']['code'])
+    next_forecast = (forecast['list'][7]['weather'][0]['id'])
+    print next_forecast
+
 
 #    print "--> updated weather"
 #    print strftime("%a, %d %b %Y %H:%M:%S")
@@ -134,7 +142,7 @@ while True:
 
     # Check forecast codes to make sure none are rain or snow https://developer.yahoo.com/weather/documentation.html
 #    print '--> Check for green'
-    if next_forecast == "24" or next_forecast == "26" or next_forecast == "27" or next_forecast == "28" or next_forecast == "29" or next_forecast == "30" or next_forecast == "31" or next_forecast == "32" or next_forecast == "33" or next_forecast == "34" or next_forecast == "36" or next_forecast == "44":
+    if int(next_forecast) >= 700:
         green_cloud = 0
     else:
         green_cloud = 1
@@ -147,7 +155,7 @@ while True:
     else:
         red_cloud = 0
 
-    # Subtracts 10deg from todays low than checks to see if that is greater than tomorrows low.
+    # Subtracts 10deg from todays low then checks to see if that is greater than tomorrows low.
     # If tomorrow is more than 10% colder the cloud should be blue
 #    print '--> Check for blue'
     if (int(today_high)-5) > int(next_high):
