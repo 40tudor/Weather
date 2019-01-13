@@ -20,7 +20,7 @@ LED_STRIP      = ws.WS2811_STRIP_RGB
 heartbeat      = 0
 colorHeart     = Color(0,200,0)
 
-owm_api_key = "65c53054e58a0f87648abf849ed06ff3"
+#owm_api_key = "65c53054e58a0f87648abf849ed06ff3"
 
 # Create NeoPixel object with appropriate configuration.
 strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
@@ -62,36 +62,41 @@ def getWeather():
 #    global weather
 #    weather = json.loads(today.text)
 #    print type(weather)
-    tomorrow = requests.get('https://api.openweathermap.org/data/2.5/forecast?zip=55331,us&units=imperial&APPID=65c53054e58a0f87648abf849ed06ff3')
+    try:
+        tomorrow = requests.get('https://api.openweathermap.org/data/2.5/forecast?zip=55331,us&units=imperial&APPID=65c53054e58a0f87648abf849ed06ff3')
+    except requests.exceptions.RequestException as e:
+        print "exception:",e
+        return
     global forecast
     forecast = json.loads(tomorrow.text)
-    print type(forecast)
+#    print type(forecast)
 #    print forecast
 
     # Gets todays High and Low
 #    print '--> Getting Todays Temps'
     global today_high
     today_high = (forecast['list'][1]['main']['temp_max'])
-    print today_high
+    print "Today's High: ", today_high
     global today_low
     today_low = (forecast['list'][1]['main']['temp_min'])
-    print today_low
+    print "Today's Low: ", today_low
 
     # Gets tomorrows High and Low
 #    print '--> Getting Tomorrows Temps'
     global next_high
     next_high = (forecast['list'][7]['main']['temp_max'])
-    print next_high
+    print "Next High: ", next_high
     global next_low
     next_low = (forecast['list'][7]['main']['temp_min'])
-    print next_low
+    print "Next Low: ", next_low
 
     # Get weather code of tomorrows forecast
 #    print '--> Getting Tomorrows Weather Code'
     global next_forecast 
     next_forecast = (forecast['list'][7]['weather'][0]['id'])
-    print next_forecast
-
+    global next_forecast_desc
+    next_forecast_desc = (forecast['list'][7]['weather'][0]['description'])
+    print "Forecast: ", next_forecast ," : ",next_forecast_desc
 
 #    print "--> updated weather"
 #    print strftime("%a, %d %b %Y %H:%M:%S")
@@ -129,18 +134,18 @@ while True:
             getWeather()
             timer = time.time()
 
-    # Heartbeat once per 3 sec
+    # Heartbeat once per 2 sec
 #    print '--> Heartbeat Timer',time.time()-timer1
-    if time.time() - timer1 > 3 and heartbeat==0:
+    if time.time() - timer1 > 2 and heartbeat==0:
 	heartbeat = 1
-        colorHeart = Color(int(brightness*153),0,int(brightness*153))
+        colorHeart = Color(0,0,0)
         timer1 = time.time()
-    elif time.time() - timer1 > 3 and heartbeat==1:
+    elif time.time() - timer1 > 2 and heartbeat==1:
         heartbeat = 0
-	colorHeart = Color(int(brightness*150),0,0)
+	colorHeart = Color(int(brightness*255),0,0)
         timer1 = time.time()
 
-    # Check forecast codes to make sure none are rain or snow https://developer.yahoo.com/weather/documentation.html
+    # Check forecast codes to make sure none are rain or snow https://openweathermap.org/weather-conditions
 #    print '--> Check for green'
     if int(next_forecast) >= 700:
         green_cloud = 0
