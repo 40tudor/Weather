@@ -67,46 +67,70 @@ def getWeather():
     except requests.exceptions.RequestException as e:
         print "exception:",e
         return
+        
     global forecast
     forecast = json.loads(tomorrow.text)
-#    print type(forecast)
-#    print forecast
-
-    # Gets todays High and Low
-#    print '--> Getting Todays Temps'
+#   print type(forecast)
+#   print forecast
+#   Gets todays High and Low
+#   print '--> Getting Todays Temps'
     global today_high
-    today_high = (forecast['list'][1]['main']['temp_max'])
-    print "Today's High: ", today_high
+    try:
+        today_high = (forecast['list'][1]['main']['temp_max'])
+    except:
+        print "[ERROR] JSON decode error: today_high"
+        return
+    finally:
+        print "Today's High: ", today_high
     global today_low
-    today_low = (forecast['list'][1]['main']['temp_min'])
-    print "Today's Low: ", today_low
+    try:
+        today_low = (forecast['list'][1]['main']['temp_min'])
+    except:
+        print "[ERROR] JSON decode error: today_low"
+        return
+    finally:    
+        print "Today's Low: ", today_low
 
-    # Gets tomorrows High and Low
-#    print '--> Getting Tomorrows Temps'
+#   Gets tomorrows High and Low
+#   print '--> Getting Tomorrows Temps'
     global next_high
-    next_high = (forecast['list'][7]['main']['temp_max'])
-    print "Next High: ", next_high
+    try:
+        next_high = (forecast['list'][7]['main']['temp_max'])
+    except:
+        print "[ERROR] JSON decode error: next_high"
+        return
+    finally:    
+        print "Next High: ", next_high
+        
     global next_low
-    next_low = (forecast['list'][7]['main']['temp_min'])
-    print "Next Low: ", next_low
+    try:
+        next_low = (forecast['list'][7]['main']['temp_min'])
+    except:
+        print "[ERROR] JSON decode error: next_low"
+        return
+    finally:
+        print "Next Low: ", next_low
 
-    # Get weather code of tomorrows forecast
-#    print '--> Getting Tomorrows Weather Code'
+#   Get weather code of tomorrows forecast
+#   print '--> Getting Tomorrows Weather Code'
     global next_forecast 
-    next_forecast = (forecast['list'][7]['weather'][0]['id'])
-    global next_forecast_desc
-    next_forecast_desc = (forecast['list'][7]['weather'][0]['description'])
-    print "Forecast: ", next_forecast ," : ",next_forecast_desc
+    try:
+        next_forecast = (forecast['list'][7]['weather'][0]['id'])
+    except:
+        print "[ERROR] JSON decode error: next_forecast"
+        return
+    finally:
+        print "Forecast: ", next_forecast
 
-#    print "--> updated weather"
-#    print strftime("%a, %d %b %Y %H:%M:%S")
-#    print "    todays high is", int(today_high)
-#    print "    todays low is", int(today_low)
-#    print "    todays code is", int(today_code)
-#    print "    tomorrows code is", int(next_forecast)
-#    print "    next high is", int(next_high)
-#    print "    next low is", int(next_low)
-    
+    global next_forecast_desc
+    try:
+        next_forecast_desc = (forecast['list'][7]['weather'][0]['description'])
+    except:
+        print "[ERROR] JSON decode error: next_forecast_desc"
+        return
+    finally:
+        print "Description: ", next_forecast_desc
+        
 ###   MAIN   ### 
 
 #initialize lights
