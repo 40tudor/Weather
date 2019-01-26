@@ -2,6 +2,7 @@
 
 import json, requests 
 import time
+import fourletterphat as flp
 
 from time import localtime, strftime
 
@@ -28,15 +29,18 @@ strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, 
 strip.begin()
 
 #Theater chase display to show activity
-def theaterChase(strip, color, wait_ms=50, iterations=10):
-	for j in range(iterations):
-		for q in range(3):
-			for i in range(0, strip.numPixels(), 3):
-				strip.setPixelColor(i+q, color)
-			strip.show()
-			time.sleep(wait_ms/1000.0)
-			for i in range(0, strip.numPixels(), 3):
-				strip.setPixelColor(i+q, 0)
+def theaterChase(strip, color, wait_ms=50, iterations=5):
+    flp.print_str("****")
+    flp.show()
+    flp.glow(period=.5, duration=2)
+    for j in range(iterations):
+        for q in range(3):
+            for i in range(0, strip.numPixels(), 3):
+                strip.setPixelColor(i+q, color)
+                strip.show()
+                time.sleep(wait_ms/1000.0)
+                for i in range(0, strip.numPixels(), 3):
+                     strip.setPixelColor(i+q, 0)
 
 # Sets the strip colors
 def colorAll(strip, colorLeft, colorRight, colorHeart):
@@ -58,19 +62,33 @@ def colorAll(strip, colorLeft, colorRight, colorHeart):
 def getWeather():
     # Change to your location
 #    print '--> Setting Location'
-#    today = requests.get('https://api.openweathermap.org/data/2.5/weather?zip=55331,us&units=imperial&APPID=65c53054e58a0f87648abf849ed06ff3')
-#    global weather
-#    weather = json.loads(today.text)
-#    print type(weather)
+    try:
+        today = requests.get('https://api.openweathermap.org/data/2.5/weather?zip=55331,us&units=imperial&APPID=65c53054e58a0f87648abf849ed06ff3')
+    except requests.exceptions.RequestException as e:
+        print "exception1:",e
+        return
+
+    global weather
+    weather = json.loads(today.text)
+
+    global curr_temp
+    try:
+        curr_temp = (weather['main']['temp'])
+    except:
+        print "[ERROR] JSON decode error: curr_temp"
+        return
+    finally:
+        print "Current Temp: ",curr_temp
+
     try:
         tomorrow = requests.get('https://api.openweathermap.org/data/2.5/forecast?zip=55331,us&units=imperial&APPID=65c53054e58a0f87648abf849ed06ff3')
     except requests.exceptions.RequestException as e:
-        print "exception:",e
+        print "exception:2",e
         return
         
     global forecast
     forecast = json.loads(tomorrow.text)
-#   print type(forecast)
+
 #   print forecast
 #   Gets todays High and Low
 #   print '--> Getting Todays Temps'
@@ -140,6 +158,11 @@ timer = time.time()
 timer1 = time.time()
 
 while True:
+# Display Current Temperature
+    ctemp = str(curr_temp)
+    flp.print_number_str(ctemp[:4])
+    flp.show()
+
     # Check time to see if we should be in night mode
     if 8 < int(time.strftime("%H",localtime())) <= 19:
 #        print "8 < ",time.strftime("%H",localtime())," <= 19....bright"
