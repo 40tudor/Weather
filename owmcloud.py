@@ -159,8 +159,8 @@ timer1 = time.time()
 
 while True:
 # Display Current Temperature
-    ctemp = str(curr_temp)
-    flp.print_number_str(ctemp[:4])
+    ctemp = str(int(curr_temp))
+    flp.print_number_str(ctemp[:3]+"F")
     flp.show()
 
     # Check time to see if we should be in night mode
