@@ -167,7 +167,7 @@ while True:
 
     # Update weather once an hr
 #    print '--> Weather Timer: ',time.time() - timer
-    if time.time() - timer > 3600:
+    if time.time() - timer > 900:
         if brightness <> 0:
             getWeather()
             timer = time.time()
