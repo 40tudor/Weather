@@ -68,10 +68,17 @@ def getWeather():
         weather = client.forecast(q="55331", days=2)
     except requests.exceptions.RequestException as e:
         print "exception1:",e
-        return
+#        return
 
 #    global weather
 #    weather = json.loads(forecast.text)
+    global forecast_time
+    try:
+        forecast_time = (weather['current']['last_updated'])
+    except:
+        print "[ERROR] JSON decode error: forecast_time"
+    finally:
+        print "Forecast Time: ",forecast_time
 
     global curr_temp
     try:
