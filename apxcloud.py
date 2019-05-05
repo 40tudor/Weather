@@ -6,7 +6,7 @@ import fourletterphat as flp
 
 from time import localtime, strftime
 from apixu.client import ApixuClient
-from neopixel import *
+from rpi_ws281x import *
 
 # LED strip configuration:
 LED_COUNT      = 21      # Number of LED pixels.

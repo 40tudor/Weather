@@ -1,7 +1,7 @@
 import json, requests
 import time
 
-from neopixel import *
+from rpi_ws281x import *
 
 # LED strip configuration:
 LED_COUNT      = 60      # Number of LED pixels.
